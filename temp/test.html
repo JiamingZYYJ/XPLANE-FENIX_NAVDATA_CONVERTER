@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.26.1/axios.js"></script>
+</head>
+<body>
+    <h2>点我上次 .dat文件</h2> <br>
+    <input type="file" id="upload" accept=".dat">
+    <h2>填写信息</h2> <br>
+    航路点<input type="text" id="wpt"> <br>
+    ID自增数值<input type="text" id="startpoint"> <br>
+    机场ICAO<input type="text" id="airport"> <br> <br>
+    <h2>填写数据后再点生成！</h2>
+    <button onclick="startTransfer()">开始转换</button>
+    <script>
+        $('#upload').change((e)=>{
+            toBase64(e)
+        })
+        let base64 = ''
+        function toBase64(e){
+            let reader = new FileReader()
+            reader.readAsDataURL(e.target.files[0])
+            reader.onload = res =>{
+                base64 = res.target.result
+            }
+        }
+        function startTransfer(){
+            let wpt = $('#wpt').val()
+            let startpoint = $('#startpoint').val()
+            let airport = $('#airport').val()
+            console.log('各种获取的数据如下')
+            console.log([base64,wpt,startpoint,airport])
+            axios.post(`https://api.skylineflyleague.cn/efb/NavExchanger/Controller/SendNavdata.php?Wpt=${wpt}&startpoint=${startpoint}&airport=${airport}`,base64).then((res)=>{ 
+                console.log(res.data)
+                })
+        }
+    </script>
+</body>
+</html>
